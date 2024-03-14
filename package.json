@@ -1,0 +1,38 @@
+{
+    "name": "rsso",
+    "version": "0.1.0",
+    "description": "",
+    "main": "index.mjs",
+    "type": "module",
+    "exports": {
+        ".": {
+          "import": "./index.mjs"
+        },
+        "./package.json": "./package.json"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Eduardo Velasques",
+    "license": "MIT",
+    "repository": "rssojs/rsso",
+    "keywords": [
+        "css",
+        "less",
+        "sass",
+        "scss",
+        "style",
+        "stylex",
+        "simple",
+        "util",
+        "utility"
+    ],
+    "dependencies": {
+    },
+    "files": [
+        "LICENSE",
+        "HISTORY.md",
+        "README.md",
+        "index.mjs"
+    ]
+}
