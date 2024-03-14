@@ -2,7 +2,7 @@
 
 # `R`un-time `S`tyle `S`heet `O`bjects
 
-RSSO is like [StyleX](https://stylexjs.com/) but with [LESS](https://lesscss.org/) and [SASS/SCSS](https://sass-lang.com/) logic structure.
+RSSO is like [StyleX](https://stylexjs.com/) but supports [LESS](https://lesscss.org/) and [SASS/SCSS](https://sass-lang.com/) logic structures.
 
 This pure JavaScript framework brings a new way to build your CSS, in a much more practical way, less verbose, without limitations, and with no compilations.
 
@@ -10,8 +10,7 @@ All CSS is generated on run-time and injected into `<style>`s in the HTML.
 
 The style sheet is implemented in fully raw JavaScript Objects.
 
-Generates CSS classes to be used within [React](https://react.dev/) Components.
-
+Generates CSS classes within [React](https://react.dev/) Components.
 
 ## How To Use
 
@@ -61,7 +60,7 @@ const style = {
 export default style;
 ```
 
-Then just use in your React component:
+Then use it in your React component:
 
 `index.jsx`
 
