@@ -1,6 +1,6 @@
 ![Logo](https://raw.githubusercontent.com/rssojs/rsso/main/assets/logo.svg)
 
-# `R`un-time `S`tyle `S`heet `O`bjects
+# `R`emarkable `S`tructure `O`utflow
 
 RSSO is like [StyleX](https://stylexjs.com/) but supports [LESS](https://lesscss.org/) and [SASS/SCSS](https://sass-lang.com/) logic structures.
 
