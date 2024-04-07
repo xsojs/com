@@ -1,10 +1,14 @@
 ![Logo](https://raw.githubusercontent.com/rssojs/rsso/main/assets/logo.svg)
 
-# `R`emarkable `S`tructure `O`utflow
+# `R`emarkable `S`tructures `O`utflows
 
-RSSO is like [StyleX](https://stylexjs.com/) but supports [LESS](https://lesscss.org/) and [SASS/SCSS](https://sass-lang.com/) logic structures.
+RSO is an ultra-lightweight and zero-dependency reactive UI framework written in pure vanilla JavaScript, that outflows remarkable DOM and CSS structures.
 
-This pure JavaScript framework brings a new way to build your CSS, in a much more practical way, less verbose, without limitations, and with no compilations.
+RSO is like React but without JSX, it supports component development with properties, state, changes observation (effects), dynamic DOM render, referencing, events, and more.
+
+RSO has your own CSS abstraction, is like StyleX, but more simple to use and dynamic, and supports LESS and SASS/SCSS hierarchy structures-like.
+
+This pure JavaScript framework brings a new way to build your DOM Components, with dynamic HTML and CSS, in a much more practical way, less verbose, without limitations, and with **no compilations**.
 
 All CSS is generated on run-time and injected into `<style>`s in the HTML.
 
