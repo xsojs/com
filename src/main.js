@@ -1,16 +1,27 @@
+import { ensureFunction } from "@xso/utils";
+import Component from "./Component";
+import ensureComponent from "./ensureComponent";
+import isComponent from "./isComponent";
 
-export { default as css } from "./css/css";
-export { default as com } from "./com/com";
+import propsDefined from "./propsDefined";
+import ensureType from "./ensureType";
+import jsonDefinition from "./jsonDefinition";
 
-export { default as ensureArray } from "./utils/ensureArray";
-export { default as ensureFunction } from "./utils/ensureFunction";
-export { default as ensureObject } from "./utils/ensureObject";
-export { default as ensureString } from "./utils/ensureString";
+function com(func) {
+    ensureFunction('Component', func);
+    return new Component(func);
+}
 
-export { default as isArray } from "./utils/isArray";
-export { default as isBoolean } from "./utils/isBoolean";
-export { default as isFunction } from "./utils/isFunction";
-export { default as isNumber } from "./utils/isNumber";
-export { default as isObject } from "./utils/isObject";
-export { default as isString } from "./utils/isString";
-export { default as isEquals } from "./utils/isEquals";
+com.create = (dom, component, props) => {
+    ensureComponent(component);
+    component.parent = dom;
+    component.render(props);
+};
+
+com.ensure = ensureComponent;
+com.is = isComponent;
+com.ensureType = ensureType;
+com.props = propsDefined;
+com.json = jsonDefinition;
+
+export default com;
