@@ -39,6 +39,10 @@ class Component {
         store.COMPONENTS.push({key: this.#key, instance: this});
     }
 
+    name() {
+        return this.#func.name;
+    }
+
     clone() {
         const com = new Component(this.#func);
         return com;
@@ -87,7 +91,7 @@ class Component {
             this.#initialized = true;
         }
         let view = this.#onView.bind(this)();
-        if (view.length == 0) {
+        if (!view || view.length == 0) {
             view = [{span: {style: {display: 'none'}}}]
         }
         const fragment = document.createDocumentFragment();
