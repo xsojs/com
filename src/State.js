@@ -10,6 +10,7 @@ class State {
         this.#changes = changes;
         this.#value = value;
     }
+
     set $val(value) {
         if (this.#value === value) {
             return;
@@ -18,6 +19,10 @@ class State {
         this.#component.render();
         this.#changes.fire(this);
     }
+    get $val() {
+        return this.#value;
+    }
+
     set val(value) {
         if (this.#value === value) {
             return;
@@ -28,6 +33,7 @@ class State {
     get val() {
         return this.#value;
     }
+    
     get previous() {
         return this.#previous;
     }
