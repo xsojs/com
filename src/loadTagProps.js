@@ -1,46 +1,52 @@
 import {
     ensureArray, ensureObject, ensureString,
-    ensureFunction, isString, isArray
+    ensureFunction, isString, isArray,
+    isObject
 } from "@xso/utils";
 import render from "./render";
 
 function loadTagProps(tag, props) {
     ensureObject('Properties', props);
+    const invalidContent = (v)=> new Error(`Content of type ${typeof v} is not valid, only string, object, or array with objects.`);
     for (const key of Object.keys(props)) {
         const value = props[key];
-        if (key == '_') {
+        if (key == '_' && value) {
             if (isString(value)) {
                 tag.textContent = value;
             } else if (isArray(value)) {
                 render(tag, value);
+            } else if (isObject(value)) {
+                render(tag, [ value ]);
             } else {
-                throw new Error(`Content of type ${typeof value} is not valid, only string or array with objects.`);
+                throw invalidContent(value);
             }
-        } else if (key == '$') {
+        } else if (key == '$' && value) {
             if (isString(value)) {
                 tag.innerHTML = value;
             } else if (isArray(value)) {
                 render(tag, value);
+            } else if (isObject(value)) {
+                render(tag, [ value ]);
             } else {
-                throw new Error(`Content of type ${typeof value} is not valid, only string or array with objects.`);
+                throw invalidContent(value);
             }
-        } else if (key == 'text') {
+        } else if (key == 'text' && value) {
             ensureString(key, value);
             tag.innerText = value;
-        } else if (key == 'html') {
+        } else if (key == 'html' && value) {
             ensureString(key, value);
             tag.innerHTML = value;
-        } else if (key == 'style') {
+        } else if (key == 'style' && value) {
             ensureObject(key, value);
             for (const styleKey of Object.keys(value)) {
                 tag.style[styleKey] = value[styleKey];
             }
-        } else if (key == 'className') {
+        } else if (key == 'className' && value) {
             ensureString(key, value);
             tag.className = value;
-        } else if (key == 'classList') {
+        } else if (key == 'classList' && value) {
             loadClassList(tag, value);
-        } else if (key == 'class') {
+        } else if (key == 'class' && value) {
             if (isString(value)) {
                 tag.className = value;
             } else if (isArray(value)) {
