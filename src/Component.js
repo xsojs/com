@@ -5,6 +5,7 @@ import Props from "./Props";
 import State from "./State";
 import Ref from "./Ref";
 import Changes from "./Changes";
+import ensureComponent from "./ensureComponent";
 
 class Component {
     #initialized = false;
@@ -13,9 +14,10 @@ class Component {
     #props = null;
     #updating = null;
     #states = [];
-    #onDestroy = () => {};
+    #onMount = () => {};
+    #onUnmount = () => {};
     #onView = () => {};
-    #children = [];
+    #children = { elements: [], components: [] };
     #changes = new Changes();
     parent = null;
     #renderTimeout = null;
@@ -48,8 +50,55 @@ class Component {
         return com;
     }
 
-    destroy(func) {
-        this.#onDestroy = func;
+    childrenElements() {
+        return [...this.#children.elements];
+    }
+
+    childrenComponents() {
+        return [...this.#children.components];
+    }
+
+    appendChildComponent(com) {
+        ensureComponent(com);
+        this.#children.components.push(com);
+    }
+
+    #unmountChildrenElements() {
+        if (this.#children.elements.length > 0) {
+            parent = this.#children.elements[0].parentNode;
+            if (parent == null) {
+                return;
+            }
+            for (const child of this.#children.elements) {
+                parent.removeChild(child);
+            }
+        }
+    }
+
+    #unmountChildrenComponents() {
+        debugger;
+        for (const child of this.#children.components) {
+            child.unmount();
+        }
+        this.#children.components = [];
+    }
+
+    mount(func) {
+        if (func) {
+            this.#onMount = func;
+        } else {
+            this.#onMount();
+        }
+    }
+
+    unmount(func) {
+        if (func) {
+            this.#onUnmount = func;
+        } else {
+            this.#unmountChildrenComponents();
+            this.#unmountChildrenElements();
+            this.#onUnmount();
+        }
     }
 
     view(func) {
@@ -88,36 +137,43 @@ class Component {
         }
         if (this.#initialized == false) {
             this.#func.bind(this)(this.#props.val);
-            this.#initialized = true;
         }
         let view = this.#onView.bind(this)();
         if (!view || view.length == 0) {
             view = [{span: {style: {display: 'none'}}}]
         }
+        let parent = null;
+        if (this.#updating) {
+            parent = this.#children.elements[0].parentNode;
+        }
         const fragment = document.createDocumentFragment();
+        this.#unmountChildrenComponents();
         render(fragment, view, this);
         if (this.#updating) {
-            const children = [];
+            const elements = [];
             for (const child of fragment.children) {
-                children.push(child);
+                elements.push(child);
             }
-            if (this.#children.length == 0) {
+            if (this.#children.elements.length == 0) {
                 this.parent.appendChild(fragment);
             } else {
-                parent = this.#children[0].parentNode;
-                parent.insertBefore(fragment, this.#children[0]);
-                for (const child of this.#children) {
-                    parent.removeChild(child);
-                }
+                parent.appendChild(fragment);
+                this.#unmountChildrenElements();
             }
-            this.#children = children;
+            this.#children.elements = elements;
         } else {
             for (const child of fragment.children) {
-                this.#children.push(child);
+                this.#children.elements.push(child);
             }
             this.parent.appendChild(fragment);
         }
         this.#updating = null;
+        if (this.#initialized == false) {
+            this.#initialized = true;
+            if (this.#onMount) {
+                window.setTimeout(this.#onMount, 0);
+            }
+        }
     }
 
     static isSameKind(obj, com) {
