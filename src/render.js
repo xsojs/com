@@ -1,7 +1,6 @@
 import {
     isArray, isObject, isString
 } from "@xso/utils";
-import Component from "./Component";
 import Ref from "./Ref";
 import loadTagProps from "./loadTagProps";
 import store from "./store";
@@ -29,13 +28,16 @@ function render(dom, defView, com) {
                 const props = defView[key];
                 if (key.indexOf('_') != 0) {
                     const tag = document.createElement(key);
-                    loadTagProps(tag, props);
+                    loadTagProps(tag, props, com);
                     elements.push(tag);
                     dom.appendChild(tag);
                 } else if (store.isKey(key)) {
                     const subCom = store.getComponent(key).clone();
                     subCom.parent = dom;
                     subCom.render(props);
+                    if (com) {
+                        com.appendChildComponent(subCom);
+                    }
                     elements.push(subCom);
                 }
             }

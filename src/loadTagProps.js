@@ -5,7 +5,7 @@ import {
 } from "@xso/utils";
 import render from "./render";
 
-function loadTagProps(tag, props) {
+function loadTagProps(tag, props, com) {
     ensureObject('Properties', props);
     const invalidContent = (v)=> new Error(`Content of type ${typeof v} is not valid, only string, object, or array with objects.`);
     for (const key of Object.keys(props)) {
@@ -14,9 +14,9 @@ function loadTagProps(tag, props) {
             if (isString(value)) {
                 tag.textContent = value;
             } else if (isArray(value)) {
-                render(tag, value);
+                render(tag, value, com);
             } else if (isObject(value)) {
-                render(tag, [ value ]);
+                render(tag, [ value ], com);
             } else {
                 throw invalidContent(value);
             }
@@ -24,9 +24,9 @@ function loadTagProps(tag, props) {
             if (isString(value)) {
                 tag.innerHTML = value;
             } else if (isArray(value)) {
-                render(tag, value);
+                render(tag, value, com);
             } else if (isObject(value)) {
-                render(tag, [ value ]);
+                render(tag, [ value ], com);
             } else {
                 throw invalidContent(value);
             }
