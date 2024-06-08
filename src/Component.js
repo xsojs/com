@@ -76,7 +76,6 @@ class Component {
     }
 
     #unmountChildrenComponents() {
-        debugger;
         for (const child of this.#children.components) {
             child.unmount();
         }
