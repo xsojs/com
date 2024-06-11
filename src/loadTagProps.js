@@ -24,9 +24,9 @@ function loadTagProps(tag, props, com) {
             if (isString(value)) {
                 tag.innerHTML = value;
             } else if (isArray(value)) {
-                render(tag, value, com);
+                render(tag, value, com, true);
             } else if (isObject(value)) {
-                render(tag, [ value ], com);
+                render(tag, [ value ], com, true);
             } else {
                 throw invalidContent(value);
             }

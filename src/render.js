@@ -5,7 +5,7 @@ import Ref from "./Ref";
 import loadTagProps from "./loadTagProps";
 import store from "./store";
 
-function render(dom, defView, com) {
+function render(dom, defView, com, html) {
     const elements = [];
     if (isObject(defView)) {
         if (defView instanceof Ref) {
@@ -26,12 +26,7 @@ function render(dom, defView, com) {
             }
             for (const key of keys) {
                 const props = defView[key];
-                if (key.indexOf('_') != 0) {
-                    const tag = document.createElement(key);
-                    loadTagProps(tag, props, com);
-                    elements.push(tag);
-                    dom.appendChild(tag);
-                } else if (store.isKey(key)) {
+                if (store.isKey(key)) {
                     const subCom = store.getComponent(key).clone();
                     subCom.parent = dom;
                     subCom.render(props);
@@ -39,15 +34,27 @@ function render(dom, defView, com) {
                         com.appendChildComponent(subCom);
                     }
                     elements.push(subCom);
-                }
+                } else {
+                    const tag = document.createElement(key);
+                    loadTagProps(tag, props, com);
+                    elements.push(tag);
+                    dom.appendChild(tag);
+                } 
             }
         }
     } else if (isArray(defView)) {
         for (const item of defView) {
             if (isString(item)) {
-                const content = document.createTextNode(item);
-                dom.appendChild(content);
-                elements.push(item);
+                if (html) {
+                    const content = document.createElement('span');
+                    content.innerHTML = item;
+                    dom.appendChild(content);
+                    elements.push(item);
+                } else {
+                    const content = document.createTextNode(item);
+                    dom.appendChild(content);
+                    elements.push(item);
+                }
             } else {
                 render(dom, item, com);
             }

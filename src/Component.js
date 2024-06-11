@@ -70,7 +70,9 @@ class Component {
                 return;
             }
             for (const child of this.#children.elements) {
-                parent.removeChild(child);
+                if (parent.contains(child)) {
+                    parent.removeChild(child);
+                }
             }
         }
     }
@@ -146,7 +148,8 @@ class Component {
             parent = this.#children.elements[0].parentNode;
         }
         const fragment = document.createDocumentFragment();
-        this.#unmountChildrenComponents();
+        const oldComponents = this.#children.components;
+        this.#children.components = [];
         render(fragment, view, this);
         if (this.#updating) {
             const elements = [];
@@ -156,8 +159,15 @@ class Component {
             if (this.#children.elements.length == 0) {
                 this.parent.appendChild(fragment);
             } else {
-                parent.appendChild(fragment);
-                this.#unmountChildrenElements();
+                parent.insertBefore(fragment, this.#children.elements[0]);
+                for (const child of oldComponents) {
+                    child.unmount();
+                }
+                for (const child of this.#children.elements) {
+                    if (parent.contains(child)) {
+                        parent.removeChild(child);
+                    }
+                }
             }
             this.#children.elements = elements;
         } else {
