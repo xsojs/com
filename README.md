@@ -51,7 +51,7 @@ function Foo() {
   this.changes([active], ()=> {
     if (active.val) {
       // Calls an internal method of another component.
-      message.current._setText('Activate!');
+      message.current._setText('Active.');
     } else {
       message.current._setText('Inactive.');
     }
@@ -108,7 +108,6 @@ Here is an integration directly in the raw HTML with pure JavaScript, like this:
 
 ```html
 <script src="https://raw.githubusercontent.com/xsojs/com/dist/xso-com.umd.js"></script>
-<script>
 
 <div id="myElement"></div>
 
