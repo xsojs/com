@@ -1,122 +1,129 @@
-![Logo](https://raw.githubusercontent.com/rssojs/rsso/main/assets/logo.svg)
 
-# `R`emarkable `S`tructures `O`utflows
+# @xso/com
 
-RSO is an ultra-lightweight and zero-dependency reactive UI framework written in pure vanilla JavaScript, that outflows remarkable DOM and CSS structures.
+XSO COM is an ultra-lightweight and zero-dependency reactive UI framework written in pure vanilla JavaScript.
+
+> Builds DOM Elements dinamically in run-time.
 
 RSO is like React but without JSX, it supports component development with properties, state, changes observation (effects), dynamic DOM render, referencing, events, and more.
 
-RSO has your own CSS abstraction, is like StyleX, but more simple to use and dynamic, and supports LESS and SASS/SCSS hierarchy structures-like.
+This pure JavaScript framework brings a new way to build your DOM Components, with dynamic HTML, in a much more practical way, less verbose, without limitations, and with **no compilations**.
 
-This pure JavaScript framework brings a new way to build your DOM Components, with dynamic HTML and CSS, in a much more practical way, less verbose, without limitations, and with **no compilations**.
+It works like React, Vue, Angular, Svelte, and more, but it supports integration with old and good JavaScript vanilla in the raw HTML.
 
-All CSS is generated on run-time and injected into `<style>`s in the HTML.
+## Documentation
 
-The style sheet is implemented in fully raw JavaScript Objects.
+Here is the official website with the full documentation:
 
-Generates CSS classes within [React](https://react.dev/) Components.
+- [xsojs.dev](https://www.xsojs.dev/framework/com)
+
+## Install
+
+To start playing with XSO COM:
+
+`npm install -S @xso/com`
+
+But better, is to use the PNPM:
+
+`pnpm install @xso/com`
+
+Or if you prefer Yarn:
+
+`yarn add -S @xso/com`
+
+Or even another package manager.
 
 ## How To Use
 
-Example of my RSSO style objects definition:
+Example of the capabilities supported in the XSO component:
 
-`style.js`
-
-```javascript
-const MEDIA_QUERY = '@media only screen and (max-width: 768px)';
-
-const style = {
-  container: {
-    backgroundColor: 'gray',
-    ':hover': {
-        cursor: 'pointer'
-    },
-    '> div': {
-      padding: {
-        default: '100px 150px',
-        [MEDIA_QUERY]: '20px 50px'
-      },
-      '> button': {
-        backgroundColor: 'red',
-        ':hover': {
-            backgroundColor: 'yellow',
-        },
-        [MEDIA_QUERY]: {
-          backgroundColor: 'blue',
-          ':hover': {
-            backgroundColor: 'green'
-          }
-        }
-      }
-    }
-  },
-  button: {
-    border: '2px solid pink',
-    '&_on': {
-        boxShadow: [
-            '0 0 10px pink',
-            '0 0 10px pink'
-        ].join(','),
-    }
-  }
-};
-
-export default style;
-```
-
-Then use it in your React component:
-
-`index.jsx`
+`index.js`
 
 ```javascript
-import React, {useState} from 'react';
-
-import css from '../../common/RSSO';
-import style from './style.js';
+import com from '@xso/com';
 
 function Foo() {
-    const [active, setActive] = useState(false);
-    return (
-        <div {...css(style.container)}>
-            <div>
-                <button {...css(
-                    style.button,
-                    style[`button-${active === true && 'on'}`]
-                )}
-                onClick={()=> setActive(true)}>
-                    Foo
-                </button>
-            </div>
-        </div>
-    );
+  // Creates the state:
+  const active = this.state(false);
+  // Creates a new reference:
+  const message = this.ref();
+  // Detect changes affected:
+  this.changes([active], ()=> {
+    if (active.val) {
+      // Calls an internal method of another component.
+      message.current._setText('Activate!');
+    } else {
+      message.current._setText('Inactive.');
+    }
+  });
+  // Initialization and destruction events:
+  this.mount(()=> console.log('My Foo component is mounted.'));
+  this.unmount(()=> console.log('My Foo component was unmounted.'));
+  // Subcomponents and elements that will render:
+  this.view(()=> [
+    { div: {
+      _: [
+        { p: {
+          _: [
+            'Status: ',
+            // Loading the reference with other component:
+            message.set({ [Message]: { _: 'Waiting...' } }),
+          ]
+        } },
+        { button: {
+          // Using .$val you will force a new render.
+          // Using .val you only get or set the value.
+          // In this case, if you remove $ also will 
+          // work, no render is needed!
+          onClick: ()=> active.$val = !active.val,
+          _: 'Click me!'
+        } }, // button
+      ]
+    } } // div
+  ]);
 }
 
-export default Foo;
+const Message = com(function(props) {
+  // Creates a new reference:
+  const message = this.ref();
+  // Method shared with parent:
+  this._setText = (text)=> {
+    message.current.innerText = text;
+  };
+  this.view(()=> [
+    // Reference with DOM element:
+    message.set({ span: {
+      // All props to the Paragraph:
+      ...props
+    } }),
+  ]);
+});
+
+export default com(Foo);
 ```
 
-## Integrations
+## Vanilla JS in HTML
 
-You can integrate with any other framework to add facilities.
+Here is an integration directly in the raw HTML with pure JavaScript, like this:
 
-A good one is the [TinyColor](https://github.com/bgrins/TinyColor) because have the power to manipulate color variants easily.
+```html
+<script src="https://raw.githubusercontent.com/xsojs/com/dist/xso-com.umd.js"></script>
+<script>
 
-With all installed and ready to run, see this example:
+<div id="myElement"></div>
 
-`style.js`
-
-```javascript
-
-import tinycolor from "tinycolor2";
-
-const primaryColor = tinycolor("#32a852");
-
-const style = {
-  container: {
-    backgroundColor: primaryColor.lighten(50).toString(),
-    color: primaryColor.toString(),
-    border: `5px solid ${primaryColor.darken(50).toString()}`
-  }
-};
-
-export default style;
+<script>
+function MyXSOComponent({_}) {
+    this.view(()=> [
+        { div: {
+            _,
+        } }
+    ]);
+}
+com.create(
+    document.getElementById('myElement'), // DOM Element
+    com(MyXSOComponent), // Component Initialized
+    {_: 'My XSO component!'} // Props
+);
+</script>
 ```
