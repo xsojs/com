@@ -20,24 +20,13 @@
     "license": "MIT",
     "repository": "xsojs/com",
     "keywords": [
-        "react",
-        "vue",
-        "jquery",
-        "css",
-        "less",
-        "sass",
-        "scss",
-        "style",
-        "stylex",
-        "simple",
-        "util",
-        "utility"
+        "xso",
+        "xsojs"
     ],
     "dependencies": {
-        "@xso/utils": "link:../utils"
+        "@xso/utils": "^0.1.0"
     },
     "devDependencies": {
-        "@xso/css": "link:../css",
         "vite": "^4.3.9"
     },
     "files": [
