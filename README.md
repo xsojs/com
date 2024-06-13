@@ -107,22 +107,86 @@ export default com(Foo);
 Here is an integration directly in the raw HTML with pure JavaScript, like this:
 
 ```html
-<script src="https://raw.githubusercontent.com/xsojs/com/dist/xso-com.umd.js"></script>
+<!--
+Here is the bundle JS file to download:
+https://github.com/xsojs/com/blob/main/dist/xso-com.umd.js
+-->
+<script src="xso-com.umd.js"></script>
 
 <div id="myElement"></div>
 
 <script>
-function MyXSOComponent({_}) {
+const Counter = com(function({ initial }) {
+    const counter = this.state(initial);
+    this._reset = ()=> {
+        // Change state without render.
+        counter.val = initial;
+        // Force the render:
+        this.render();
+    }
+    this.view(()=> [
+        { p: {
+            _: `Counter: ${counter}`
+        }},
+        { button: {
+            // With $ changes the state and render.
+            onClick: ()=> { counter.$val++; },
+            _: '+ Add'
+        } },
+        ' ',
+        { button: {
+            onClick: ()=> { counter.$val--; },
+            _: '- Minus'
+        } },
+    ]);
+})
+
+function MyXSOComponent({content}) {
+    const refCounter = this.ref();
+    const refParagraph = this.ref();
     this.view(()=> [
         { div: {
-            _,
+            _: [
+                { h3: { _: 'Subcomponent directly:' } },
+                { [Counter]: {
+                    initial: 1000
+                } },
+                { h3: { _: 'Subcomponent referenced:' } },
+                refCounter.set({ [Counter]: {
+                    initial: 1000
+                } }),
+                { button: {
+                    onClick: ()=> {
+                        refCounter.current._reset();
+                    },
+                    _: 'Reset'
+                } },
+                { h3: { _: 'Content from properties:' } },
+                refParagraph.set({ p: {
+                    _: content // Prop
+                } }),
+                { button: {
+                    onClick: ()=> {
+                        refParagraph.current.style.backgroundColor = [
+                            'yellow',
+                            'orange',
+                            'blue',
+                            'pink',
+                            'red',
+                            'cyan'
+                        ][Math.floor(Math.random() * 6)];
+                    },
+                    _: 'Style'
+                } },
+            ]
         } }
     ]);
 }
+
 com.create(
     document.getElementById('myElement'), // DOM Element
     com(MyXSOComponent), // Component Initialized
-    {_: 'My XSO component!'} // Props
+    {content: 'My prop content!'} // Props
 );
 </script>
 ```

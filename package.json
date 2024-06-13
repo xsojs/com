@@ -1,6 +1,6 @@
 {
     "name": "@xso/com",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Reactive components framework of the XSO.",
     "main": "./dist/xso-com.umd.js",
     "module": "./dist/xso-com.es.js",
