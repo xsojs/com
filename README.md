@@ -33,11 +33,99 @@ Or if you prefer Yarn:
 
 Or even another package manager.
 
+## Start
+
+Create a new project with Vite using NPM:
+
+`npm create vite@latest myproject`
+
+Or even better is to use PNPM:
+
+`pnpm create vite@latest myproject`
+
+Choose the framework:
+
+- `Vanilla`.
+
+Then choose the variant:
+
+- `JavaScript`
+
+Into the new project folder created...
+
+Add the XSO COM dependency using the NPM:
+
+`npm install -S @xso/com`
+
+Or with PNPM:
+
+`pnpm install @xso/com`
+
+Start your project with NPM:
+
+- `npm run dev`
+
+Or with PNPM:
+
+- `pnpm run dev`
+
+The dev URL that appeared should open in the browser...
+
+Edit your `index.html` adding a `div` to initialize your XSO component:
+
+`index.html`
+
+```html
+<div id="foo"></div>
+```
+
+Create your first `Foo` XSO component file:
+
+`Foo.js`
+
+```javascript
+import com from '@xso/com';
+
+function Foo({text}) {
+  this.view(()=> [
+    { div: {
+      _: [
+        { h2: {
+          _: 'My First XSO Component'
+        } },
+        { p: {
+          _: text
+        } }
+      ]
+    } } // div
+  ]);
+}
+
+export default com(Foo);
+```
+
+In the `main.js` add the import of the XSO COM and your new `Foo` component:
+
+`main.js`
+
+```javascript
+import com from "@xso/com";
+import Foo from "./Foo.js";
+
+com.create(
+  document.getElementById('foo'), // DOM Element
+  Foo, // Component
+  {text: 'Hello world!'} // Initial Props
+);
+```
+
+Now you are ready to go further.
+
 ## How To Use
 
 Example of the capabilities supported in the XSO component:
 
-`index.js`
+`Foo.js`
 
 ```javascript
 import com from '@xso/com';
