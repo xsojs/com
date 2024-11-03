@@ -9,7 +9,7 @@ import jsonDefinition from "./jsonDefinition";
 
 function com(func) {
     ensureFunction('Component', func);
-    return new Component(func);
+    return new Component(func, new Error().stack);
 }
 
 com.create = (dom, component, props) => {
