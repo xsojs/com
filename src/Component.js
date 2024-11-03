@@ -10,6 +10,7 @@ import ensureComponent from "./ensureComponent";
 class Component {
     #initialized = false;
     #func = null;
+    #errorStack = null;
     #key = null;
     #props = null;
     #updating = null;
@@ -21,17 +22,18 @@ class Component {
     #changes = new Changes();
     parent = null;
     #renderTimeout = null;
-    constructor(func) {
+    constructor(func, errorStack) {
         if (!isFunction(func) || func.toString().indexOf('function') != 0) {
             throw new Error('Only classic functions are used for components and arrow function is not supported.')
         }
         this.#func = func;
+        this.#errorStack = errorStack;
         this.#load();
     }
 
     #load() {
         while (true) {
-            const key = store.COMPONENTS_PREFIX +'['+ this.#func.name +']_'+ (Math.random() + 1).toString(36).substring(2);
+            const key = store.COMPONENTS_PREFIX +'['+ this.name() +']_'+ (Math.random() + 1).toString(36).substring(2);
             if (store.COMPONENTS.find((i)=> i.key == key)) {
                 continue;
             }
@@ -46,8 +48,12 @@ class Component {
     }
 
     clone() {
-        const com = new Component(this.#func);
+        const com = new Component(this.#func, this.#errorStack);
         return com;
+    }
+
+    logErrorStack() {
+        window.setTimeout(()=> console.error(this.name() +' >> Component'+ this.#errorStack), 0);
     }
 
     childrenElements() {
@@ -115,16 +121,21 @@ class Component {
     }
 
     render(props) {
-        const that = this;
-        if (!this.#props) {
-            that.#render(props);
-        } else {
-            if (this.#renderTimeout) {
-                clearTimeout(this.#renderTimeout);
-            }
-            this.#renderTimeout = setTimeout(() => {
+        try {
+            const that = this;
+            if (!this.#props) {
                 that.#render(props);
-            }, 0);
+            } else {
+                if (this.#renderTimeout) {
+                    clearTimeout(this.#renderTimeout);
+                }
+                this.#renderTimeout = setTimeout(() => {
+                    that.#render(props);
+                }, 0);
+            }
+        } catch (e) {
+            this.logErrorStack();
+            throw e;
         }
     }
 
