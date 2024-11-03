@@ -7,28 +7,23 @@ import render from "./render";
 
 function loadTagProps(tag, props, com) {
     ensureObject('Properties', props);
-    const invalidContent = (v)=> new Error(`Content of type ${typeof v} is not valid, only string, object, or array with objects.`);
     for (const key of Object.keys(props)) {
         const value = props[key];
         if (key == '_' && value) {
-            if (isString(value)) {
-                tag.textContent = value;
-            } else if (isArray(value)) {
+            if (isArray(value)) {
                 render(tag, value, com);
             } else if (isObject(value)) {
                 render(tag, [ value ], com);
             } else {
-                throw invalidContent(value);
+                tag.textContent = value;
             }
         } else if (key == '$' && value) {
-            if (isString(value)) {
-                tag.innerHTML = value;
-            } else if (isArray(value)) {
+            if (isArray(value)) {
                 render(tag, value, com, true);
             } else if (isObject(value)) {
                 render(tag, [ value ], com, true);
             } else {
-                throw invalidContent(value);
+                tag.innerHTML = value;
             }
         } else if (key == 'text' && value) {
             ensureString(key, value);
@@ -55,9 +50,11 @@ function loadTagProps(tag, props, com) {
                 throw new Error(`CSS Class of type ${typeof value} is not valid, only string or array of strings is accepted.`);
             }
         } else if (key.indexOf('on') == 0) {
-            ensureFunction(key, value);
-            tag.addEventListener(key.substring(2).toLowerCase(), value);
-        } else {
+            if (value) {
+                ensureFunction(key, value);
+                tag.addEventListener(key.substring(2).toLowerCase(), value);
+            }
+        } else if (value != undefined && value != null) {
             tag.setAttribute(key, value);
         }
     }
