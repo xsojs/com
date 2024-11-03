@@ -27,13 +27,20 @@ function render(dom, defView, com, html) {
             for (const key of keys) {
                 const props = defView[key];
                 if (store.isKey(key)) {
-                    const subCom = store.getComponent(key).clone();
-                    subCom.parent = dom;
-                    subCom.render(props);
-                    if (com) {
-                        com.appendChildComponent(subCom);
+                    let subCom = store.getComponent(key);
+                    if (subCom) {
+                        subCom = subCom.clone();
+                        subCom.parent = dom;
+                        subCom.render(props);
+                        if (com) {
+                            com.appendChildComponent(subCom);
+                        }
+                        elements.push(subCom);
+                    } else {
+                        const tag = document.createElement('xso-com-error');
+                        tag.innerText = '# XSO Component Error #';
+                        dom.appendChild(tag);
                     }
-                    elements.push(subCom);
                 } else {
                     const tag = document.createElement(key);
                     loadTagProps(tag, props, com);
