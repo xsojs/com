@@ -34,7 +34,11 @@ function loadTagProps(tag, props, com) {
         } else if (key == 'style' && value) {
             ensureObject(key, value);
             for (const styleKey of Object.keys(value)) {
-                tag.style[styleKey] = value[styleKey];
+                if (styleKey.indexOf('--') === 0) {
+                    tag.style.setProperty(styleKey, value[styleKey]);
+                } else {
+                    tag.style[styleKey] = value[styleKey];
+                }
             }
         } else if (key == 'className' && value) {
             ensureString(key, value);
