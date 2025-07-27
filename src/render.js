@@ -66,7 +66,7 @@ function render(dom, defView, com, html) {
                 render(dom, item, com);
             }
         }
-    } else {
+    } else if (defView !== null && defView !== undefined) {
         throw new Error(`View of type ${typeof defView} is invalid, only object or array of objects.`)
     }
     return elements;
