@@ -5,12 +5,12 @@ import Ref from "./Ref";
 import loadTagProps from "./loadTagProps";
 import store from "./store";
 
-function render(dom, defView, com, html) {
+function render(dom, defView, com, html = false, xmlns) {
     const elements = [];
     if (isObject(defView)) {
         if (defView instanceof Ref) {
             const refElements = render(dom, defView.get(), com);
-            if (refElements.length == 0) {
+            if (refElements.length === 0) {
                 throw new Error('Reference is empty with no valid elements.')
             } else if (refElements.length > 1) {
                 throw new Error('Reference with more than 1 element.')
@@ -21,7 +21,7 @@ function render(dom, defView, com, html) {
             if (keys.length > 1) {
                 throw new Error(`Object with more than 1 keys: ${keys.join(', ')}`);
             }
-            if (keys.length == 0) {
+            if (keys.length === 0) {
                 throw new Error('Object with no key, but one is required.');
             }
             for (const key of keys) {
@@ -42,10 +42,25 @@ function render(dom, defView, com, html) {
                         dom.appendChild(tag);
                     }
                 } else {
-                    const tag = document.createElement(key);
-                    loadTagProps(tag, props, com);
-                    elements.push(tag);
-                    dom.appendChild(tag);
+                    if (key === 'svg' && !props.xmlns && !xmlns) {
+                        xmlns = "http://www.w3.org/2000/svg";
+                    }
+                    if (props.xmlns) {
+                        const tag = document.createElementNS(props.xmlns, key);
+                        loadTagProps(tag, props, com, props.xmlns);
+                        elements.push(tag);
+                        dom.appendChild(tag);
+                    } else if (xmlns) {
+                        const tag = document.createElementNS(xmlns, key);
+                        loadTagProps(tag, props, com, xmlns);
+                        elements.push(tag);
+                        dom.appendChild(tag);
+                    } else {
+                        const tag = document.createElement(key);
+                        loadTagProps(tag, props, com);
+                        elements.push(tag);
+                        dom.appendChild(tag);
+                    }
                 } 
             }
         }
@@ -63,7 +78,7 @@ function render(dom, defView, com, html) {
                     elements.push(item);
                 }
             } else {
-                render(dom, item, com);
+                render(dom, item, com, false, xmlns);
             }
         }
     } else if (defView !== null && defView !== undefined) {
