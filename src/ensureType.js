@@ -7,12 +7,12 @@ function ensureType(any, com) {
     if (isArray(any)) {
         for (const obj of any) {
             ensureObject('ensureSameKind of an invalid object.', obj);
-            if (!Component.isSameKind(obj, com)) {
+            if (!Component.isSameType(obj, com)) {
                 throw invalidError(obj);
             }
         }
     } else if (isObject(any)) {
-        if (!Component.isSameKind(any, com)) {
+        if (!Component.isSameType(any, com)) {
             throw invalidError(any);
         }
     } else {

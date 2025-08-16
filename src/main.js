@@ -20,6 +20,7 @@ com.create = (dom, component, props) => {
 
 com.ensure = ensureComponent;
 com.is = isComponent;
+com.isSameType = Component.isSameType;
 com.ensureType = ensureType;
 com.props = propsDefined;
 com.json = jsonDefinition;

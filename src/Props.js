@@ -9,13 +9,12 @@ class Props {
         this.#value = initial;
     }
     set val(v) {
-        if (JSON.stringify(this.#valueJSON) == JSON.stringify(v)) {
+        if (JSON.stringify(this.#valueJSON) === JSON.stringify(v)) {
             return;
         }
         this.#previous = this.#value;
         this.#value = v;
         this.#valueJSON = JSON.stringify(v);
-        console.log('Props >> '+ this.#component.key(), v);
         //this.#component.render(v);
     }
     get val() {

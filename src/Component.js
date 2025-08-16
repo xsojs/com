@@ -196,7 +196,7 @@ class Component {
         }
     }
 
-    static isSameKind(obj, com) {
+    static isSameType(obj, com) {
         let key = null;
         for (const _key of Object.keys(obj)) {
             key = _key;
@@ -230,10 +230,6 @@ class Component {
 
 Component.prototype.toString = function() {
     return this.key();
-}
-
-Component.prototype.isSameKind = function(obj, func) {
-    return Component.isSameKind(obj, func);
 }
 
 export default Component;
