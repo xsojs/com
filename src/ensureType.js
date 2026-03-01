@@ -6,16 +6,19 @@ function ensureType(any, com) {
     const invalidError = (obj) => new Error(`Only ${com.function().name} type is accepted! This component is invalid: ${jsonDefinition(obj)}`);
     if (isArray(any)) {
         for (const obj of any) {
+            if (!obj) {
+                continue;
+            }
             ensureObject('ensureSameKind of an invalid object.', obj);
             if (!Component.isSameType(obj, com)) {
                 throw invalidError(obj);
             }
         }
     } else if (isObject(any)) {
-        if (!Component.isSameType(any, com)) {
+        if (!any && !Component.isSameType(any, com)) {
             throw invalidError(any);
         }
-    } else {
+    } else if (!!any) {
         throw new Error('Invalid kind.');
     }
 }
