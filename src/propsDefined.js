@@ -1,6 +1,6 @@
-import { ensureObject } from "@xso/utils";
+import {ensureObject, isObject} from "@xso/utils";
 
-function propsDefined(com) {
+function propsDefined(com, newProps) {
     ensureObject(`Component Props`, com);
     let props = null;
     for (const key of Object.keys(com)) {
@@ -9,6 +9,10 @@ function propsDefined(com) {
         }
         props = com[key];
         ensureObject(`Component Props Loaded`, props);
+        if (newProps && isObject(newProps)) {
+            props = { ...props, ...newProps };
+            com[key] = props;
+        }
     }
     return props;
 }
