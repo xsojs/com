@@ -28,7 +28,7 @@ function y(t) {
 function L(t) {
   return typeof t == "function" && t != null;
 }
-function C(t) {
+function g(t) {
   return typeof t == "object" && t != null && !Array.isArray(t);
 }
 function j(t) {
@@ -72,9 +72,9 @@ function S(t, e, n, i) {
   for (const r of Object.keys(e)) {
     const s = e[r];
     if (r === "_" && s)
-      y(s) ? p(t, s, n, !1, i) : C(s) ? p(t, [s], n, !1, i) : t.textContent = s;
+      y(s) ? p(t, s, n, !1, i) : g(s) ? p(t, [s], n, !1, i) : t.textContent = s;
     else if (r === "$" && s)
-      y(s) ? p(t, s, n, !0, i) : C(s) ? p(t, [s], n, !0, i) : t.innerHTML = s;
+      y(s) ? p(t, s, n, !0, i) : g(s) ? p(t, [s], n, !0, i) : t.innerHTML = s;
     else if (r === "text" && s)
       w(r, s), t.innerText = s;
     else if (r === "html" && s)
@@ -104,7 +104,7 @@ function T(t, e, n) {
 }
 function p(t, e, n, i = !1, r) {
   const s = [];
-  if (C(e))
+  if (g(e))
     if (e instanceof O) {
       const l = p(t, e.get(), n);
       if (l.length === 0)
@@ -378,15 +378,15 @@ class f {
 f.prototype.toString = function() {
   return this.key();
 };
-function I(t) {
+function I(t, e) {
   m("Component Props", t);
-  let e = null;
-  for (const n of Object.keys(t)) {
-    if (e != null)
+  let n = null;
+  for (const i of Object.keys(t)) {
+    if (n != null)
       throw new Error(`More than 1 component in the same object: ${t}`);
-    e = t[n], m("Component Props Loaded", e);
+    n = t[i], m("Component Props Loaded", n), e && g(e) && (n = { ...n, ...e }, t[i] = n);
   }
-  return e;
+  return n;
 }
 function A(t) {
   m("jsonDefinition of an invalid object.", t);
@@ -398,25 +398,25 @@ function A(t) {
     [n]: t[e]
   });
 }
-function g(t, e) {
+function C(t, e) {
   const n = (i) => new Error(`Only ${e.function().name} type is accepted! This component is invalid: ${A(i)}`);
   if (y(t)) {
     for (const i of t)
-      if (m("ensureSameKind of an invalid object.", i), !f.isSameType(i, e))
+      if (i && (m("ensureSameKind of an invalid object.", i), !f.isSameType(i, e)))
         throw n(i);
-  } else if (C(t)) {
-    if (!f.isSameType(t, e))
+  } else if (g(t)) {
+    if (!t && !f.isSameType(t, e))
       throw n(t);
-  } else
+  } else if (t)
     throw new Error("Invalid kind.");
 }
-g.required = (t, e) => {
+C.required = (t, e) => {
   if (t)
-    return g(t, e);
+    return C(t, e);
   throw new Error(`${e.name()} is required.`);
 };
-g.optional = (t, e) => {
-  t && g(t, e);
+C.optional = (t, e) => {
+  t && C(t, e);
 };
 function d(t) {
   return k("Component", t), new f(t, new Error().stack);
@@ -427,7 +427,7 @@ d.create = (t, e, n) => {
 d.ensure = E;
 d.is = x;
 d.isSameType = f.isSameType;
-d.ensureType = g;
+d.ensureType = C;
 d.props = I;
 d.json = A;
 export {
