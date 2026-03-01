@@ -1,6 +1,6 @@
 {
     "name": "@xso/com",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "Reactive components framework of the XSO.",
     "main": "./dist/xso-com.umd.js",
     "module": "./dist/xso-com.es.js",
@@ -11,9 +11,9 @@
         }
     },
     "scripts": {
-        "dev": "bunx --bun vite",
-        "build": "bunx --bun vite build",
-        "preview": "bunx --bun vite preview",
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Eduardo Velasques",
