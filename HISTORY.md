@@ -1,3 +1,7 @@
+# 0.2.1 / 2026-03-01
+
+Props and processing objects/arrays have improvements.
+
 # 0.2.0 / 2025-08-16
 
 Render has many fixes and optimizations, SVG support.
