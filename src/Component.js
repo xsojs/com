@@ -18,6 +18,8 @@ class Component {
     #onMount = () => {};
     #onUnmount = () => {};
     #onView = () => {};
+    #onPreRender = () => {};
+    #onPostRender = () => {};
     #children = { elements: [], components: [] };
     #changes = new Changes();
     parent = null;
@@ -112,6 +114,14 @@ class Component {
         this.#onView = func;
     }
 
+    preRender(func) {
+        this.#onPreRender = func;
+    }
+
+    postRender(func) {
+        this.#onPostRender = func;
+    }
+
     ref() {
         return new Ref(this, this.#changes);
     }
@@ -150,13 +160,19 @@ class Component {
         if (this.#initialized == false) {
             this.#func.bind(this)(this.#props.val);
         }
-        let view = this.#onView.bind(this)();
+        let view = null;
+        if (this.#onView) {
+            view = this.#onView.bind(this)();
+        }
         if (!view || view.length == 0) {
             view = [{span: {style: {display: 'none'}}}]
         }
         let parent = null;
         if (this.#updating) {
             parent = this.#children.elements[0].parentNode;
+        }
+        if (this.#onPreRender) {
+            this.#onPreRender.bind(this)([...this.#children.elements], parent || this.parent);
         }
         const fragment = document.createDocumentFragment();
         const oldComponents = this.#children.components;
@@ -167,7 +183,7 @@ class Component {
             for (const child of fragment.children) {
                 elements.push(child);
             }
-            if (this.#children.elements.length == 0) {
+            if (this.#children.elements.length === 0) {
                 this.parent.appendChild(fragment);
             } else {
                 parent.insertBefore(fragment, this.#children.elements[0]);
@@ -188,10 +204,15 @@ class Component {
             this.parent.appendChild(fragment);
         }
         this.#updating = null;
+        if (this.#onPostRender) {
+            window.setTimeout(() => {
+                this.#onPostRender.bind(this)([...this.#children.elements], parent || this.parent);
+            }, 0);
+        }
         if (this.#initialized == false) {
             this.#initialized = true;
             if (this.#onMount) {
-                window.setTimeout(this.#onMount, 0);
+                window.setTimeout(this.#onMount.bind(this), 0);
             }
         }
     }
